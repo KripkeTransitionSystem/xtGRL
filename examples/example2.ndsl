@@ -1,0 +1,21 @@
+grl ProductofTwo
+{
+	actor User
+	{
+		goal StoreProductInDB
+		{
+			decompositionType=and;
+			decomposedBy FindProduct, InsertInDB;
+			demands Encryption;		
+		}
+		goal FindProduct
+		{
+			decompositionType=and;
+			decomposedBy GetFirstNumber, Get2ndNumber;	
+		}
+		goal GetFirstNumber;
+		goal Get2ndNumber;
+		goal InsertInDB;
+		softGoal Encryption;
+	}
+}

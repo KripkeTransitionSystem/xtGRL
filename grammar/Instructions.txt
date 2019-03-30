@@ -1,0 +1,3 @@
+Open the video file in this folder and follow the steps described in the video.
+Prerequisite: xtext plugin in Eclipse.
+How to install xtext plugin in Eclipse: Open "Xtext_Installation.mp4"

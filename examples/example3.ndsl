@@ -1,0 +1,24 @@
+grl HealthCare{
+	actor Patient{
+		goal Registration;
+		goal Login{
+			dependsOn Registration;
+			demands Authentication;
+		}
+		goal ProvideMedicalDetails
+		{
+			demands Security;
+		}
+		softGoal Authentication;
+		softGoal Security;
+	}
+	actor Doctor{
+		goal Registration;
+		goal Login{
+			dependsOn Registration;
+			demands Authentication;
+		}
+		goal AccessMedicalHistory;
+		softGoal Authentication;
+	}
+}

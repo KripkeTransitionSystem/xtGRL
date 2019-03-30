@@ -1,0 +1,18 @@
+grl App{
+	actor User{
+		goal StoreData
+		{
+			decompositionType=and;
+			decomposedBy getUserDetails, createUserId;
+			demands Encryption, Compression;
+			dependsOn LoginUser;		  	
+		}
+		goal LoginUser;
+		goal getUserDetails;
+		goal createUserId;
+		softGoal Encryption;
+		softGoal Compression;
+		
+	}
+	
+}

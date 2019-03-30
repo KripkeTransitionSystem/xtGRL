@@ -1,0 +1,395 @@
+grammar org.xtext.example.novadsl.NovaDsl with org.eclipse.xtext.common.Terminals
+
+generate novaDsl "http://www.xtext.org/example/novadsl/NovaDsl"
+
+Model:
+	RLspecifications+=RLSpecification* ;
+
+/****
+ * GRLBaseElement:
+	GRLElement | InLineElementLink
+;
+***/
+
+GRLElement:
+	SuperIntentionalElement | NormalElementLink | InLineElementLink | Actor | Metadata 
+;
+
+NFRLElement:
+	SuperNFRElement | NormalNFRLink | InLineNFRLink
+;
+
+NormalNFRLink:
+	NormalContribution | NFRDecomposition 
+;
+
+InLineNFRLink:
+	InLineContribution | InLineNFRDecomposition
+;
+
+SuperIntentionalElement:
+	IntentionalElement
+;
+
+SuperNFRElement:
+	SoftElement
+;
+
+SoftElement:
+	NFR_SGoal | Op_SGoal | Claim_SGoal
+;
+IntentionalElement:
+	 Softgoal | Goal //| Task //| Resource
+;
+
+RLSpecification: 
+	{RLSpecification}
+	'grl' (name=ID)? '{'
+		(grlElements+=GRLElement  )*
+	'}'	|
+	{RLSpecification}
+	'nfrl' (name=ID)? '{'
+		(nfrlElements+=NFRLElement  )*
+	'}'	
+;
+//*************************************Actor******************************************
+Actor: 
+	'actor' name= ID
+	(
+		';' |
+		(
+		'{'
+			(
+			('name' '=' label =STRING ';')?&	
+			/*
+			 *TODO I must give a default value for importanceQuantitative, which is zero, to this attribute.
+			 * 		This can be done through the post processing mechanism in xText 
+			 */
+			('importance' '='  (importance=ImportanceType | importanceQuantitative=QUALITATIVEVALUE) ';')?&
+			('description' '=' description=STRING ';')?&
+			(metaData+=Metadata)*&
+			('color' '=' fillColor = Color ';')?&
+			(elemets+=IntentionalElement | elemets+=NormalElementLink)*
+			)
+			
+		'}'			
+		)
+	)
+;
+
+//*************************************IntentionalElement******************************************
+Softgoal :
+	'softGoal' name = ID 
+	(
+		';' | 
+		(
+		'{'
+			(
+				('name' '=' label = STRING ';')?&
+				('description' '=' description=STRING ';')?&
+				('decompositionType' '=' decompositionType=DecompositionType ';')?&
+				('importance' '='  (importance=ImportanceType | importanceQuantitative=QUALITATIVEVALUE) ';')?&
+				(metaData+=Metadata)*&
+				('color' '=' fillColor = Color ';')?
+				//(elementLinks+=InLineElementLink)*		
+			)
+		'}'	
+		)		
+	)
+;
+Goal:
+'goal' name = ID
+(
+	';' |
+	(
+	 '{'
+		(
+			('name' '=' label = STRING ';')?&
+			('description' '=' description=STRING ';')?&
+			('decompositionType' '='decompositionType=DecompositionType ';')?&
+			('importance' '='  (importance=ImportanceType | importanceQuantitative=QUALITATIVEVALUE) ';')?&
+			(metaData+=Metadata)*&		
+			('color' '=' fillColor = Color ';')?&
+			(elementLinks+=InLineElementLink)*
+		)		
+	'}'			
+	)
+)
+; 
+
+ 
+
+/*****************Task and Resources cannot support InLineElementLink simultaneously with goal*******************
+Task:
+	'task' name = ID
+	(
+		';' | 
+		(
+		'{'
+			(
+				('name' '=' label = STRING ';')?&
+				('description' '=' description=STRING ';')?&
+				('decompositionType' '='decompositionType=DecompositionType ';')?&
+				('importance' '='  (importance=ImportanceType | importanceQuantitative=QUALITATIVEVALUE) ';')?&
+				(metaData+=Metadata)*&	
+				('color' '=' fillColor = Color ';')?&	
+				(elementLinks+=InLineElementLink)*	 
+			)		
+		'}'			
+		)
+	)
+;  
+Resource:
+	'resource' name = ID 
+	(
+		';' |
+		(
+		'{'
+			(
+				('name' '=' label = STRING ';')?&
+				('description' '=' description=STRING ';')?&
+				('decompositionType' '='decompositionType=DecompositionType ';')?&
+				('importance' '='  (importance=ImportanceType | importanceQuantitative=QUALITATIVEVALUE) ';')?&
+				(metaData+=Metadata)*&	
+				('color' '=' fillColor = Color ';')?
+				//(elementLinks+=InLineElementLink)*	
+			)		
+		'}'			
+		)
+	)
+;
+*****************************************************************************************************************/
+
+/*** 
+ * 
+EndLink:
+	 DependencyEnd | ContributionEnd | DecompositionEnd | DemandEnd
+;
+* 
+***/
+//*************************************NFR_Element******************************************
+NFR_SGoal:
+	'nfr_SGoal' name = ID 
+	(
+		';' | 
+		(
+		'{'
+			(
+				('name' '=' label = STRING ';')?&
+				('description' '=' description=STRING ';')?&
+				('decompositionType' '=' decompositionType=DecompositionType ';')?&
+				('importance' '='  (importance=ImportanceType | importanceQuantitative=QUALITATIVEVALUE) ';')?&
+				(metaData+=Metadata)*&
+				('color' '=' fillColor = Color ';')?&
+				(elementLinks+=InLineNFRLink)*		
+			)
+		'}'	
+		)		
+	)
+;
+
+Op_SGoal:
+	'op_SGoal' name = ID 
+	(
+		';' | 
+		(
+		'{'
+			(
+				('name' '=' label = STRING ';')?&
+				('description' '=' description=STRING ';')?&
+				('decompositionType' '=' decompositionType=DecompositionType ';')?&
+				('importance' '='  (importance=ImportanceType | importanceQuantitative=QUALITATIVEVALUE) ';')?&
+				(metaData+=Metadata)*&
+				('color' '=' fillColor = Color ';')?&
+				(elementLinks+=InLineNFRLink)*		
+			)
+		'}'	
+		)		
+	)
+;
+
+Claim_SGoal:
+	'claim_SGoal' name = ID 
+	(
+		';' | 
+		(
+		'{'
+			(
+				('name' '=' label = STRING ';')?&
+				('description' '=' description=STRING ';')?&
+				('decompositionType' '=' decompositionType=DecompositionType ';')?&
+				('importance' '='  (importance=ImportanceType | importanceQuantitative=QUALITATIVEVALUE) ';')?&
+				(metaData+=Metadata)*&
+				('color' '=' fillColor = Color ';')?&
+				(elementLinks+=InLineNFRLink)*		
+			)
+		'}'	
+		)		
+	)
+;
+
+NormalElementLink:
+	NormalDecomposition | NormalDependency | NormalDemand | NormalCTL
+;
+
+NormalDependency:
+	src=[IntentionalElement | QualifiedName] 'dependsOn' dest+=DependencyEnd  (','dest+=DependencyEnd)* ';'
+;
+
+NormalContribution:
+	src=[SoftElement | QualifiedName] 'contributesTo' dest+=ContributionEnd (',' dest+=ContributionEnd)*';'
+;
+
+NormalDecomposition:
+	src=[IntentionalElement | QualifiedName] 'decomposedBy' dest+=DecompositionEnd (','dest+=DecompositionEnd)* ';'
+;
+
+NFRDecomposition:
+	src=[SoftElement | QualifiedName] 'decomposedBy' dest+=NFRDecompositionEnd (','dest+=NFRDecompositionEnd)* ';'
+;
+
+NormalDemand:
+	src=[IntentionalElement | QualifiedName] 'demands' dest+=DemandEnd  (','dest+=DemandEnd)* ';'
+;
+NormalCTL:
+	'ctl' (ctl+=CTL)
+;
+InLineElementLink:
+	InLineDecomposition | InLineDependency | InLineDemand
+;
+
+InLineDependency:
+	'dependsOn' dest+=DependencyEnd (','dest+=DependencyEnd)* ';'
+;
+
+InLineContribution:
+	'contributesTo' dest+=ContributionEnd (',' dest+=ContributionEnd)*';'
+;
+
+InLineDecomposition:
+	'decomposedBy' dest+=DecompositionEnd (','dest+=DecompositionEnd)* ';'
+;
+
+InLineNFRDecomposition:
+	'decomposedBy' dest+=NFRDecompositionEnd (','dest+=NFRDecompositionEnd)* ';'
+;
+
+InLineDemand:
+	'demands' dest+=DemandEnd (','dest+=DemandEnd)* ';'
+;
+
+DecompositionEnd:
+	{DecompositionEnd}
+	destName=[IntentionalElement | QualifiedName] 
+	(
+		'{'
+			(description=STRING)?
+		'}'	
+	)?
+;
+
+NFRDecompositionEnd:
+	{NFRDecompositionEnd}
+	destName=[SoftElement | QualifiedName] 
+	(
+		'{'
+			(description=STRING)?
+		'}'	
+	)?
+;
+
+ContributionEnd:
+	{ContributionEnd}
+	destName = [SoftElement | QualifiedName]
+	(
+		'{'
+			(
+			('name' '=' name = ID ';')?&
+			( (contribution=ContributionType | quantitativeContribution=QUALITATIVEVALUE)';')?
+			)
+			
+		'}'
+	)?
+;
+
+DependencyEnd:
+	{DependencyEnd}
+	destName = [IntentionalElement | QualifiedName]
+	(
+		'{'
+			(description=STRING)?
+		'}'
+	)?
+;
+
+DemandEnd:
+	{DemandEnd}
+	destName=[IntentionalElement | QualifiedName] 
+	(
+		'{'
+			(description=STRING)?
+		'}'	
+	)?
+;
+
+Metadata:
+	'metadata' name = ID '=' value=STRING ';'	
+;
+
+CTL:
+	variables=Variables
+;
+Variables:
+	value=STRING
+;
+enum ImportanceType: 
+	 None = 'none'  | High = 'high'  | Medium = 'medium' | Low = 'low'
+;
+DecompositionType:
+	value=STRING 
+;
+
+
+enum ContributionType: 
+	help | make | somePositive  |
+	unknown  | someNegative  | hurt  |
+	break 
+;
+
+//enum QualitativeLabel:
+//	none | weaklyDenied |
+//	weaklySatisfied  | satisfied |
+//	conflict | unknown | denied 
+//;
+enum Color:
+	white|black|blue|green|cyan|red|purple|yellow|gray|lightGray|lightBlue|lightGreen|lightCray|lightRed|lightPurple|lightYellow
+;
+//Deprecated
+//enum Criticality:
+//	None | High | Medium | Low  
+//;
+//Deprecated
+//enum Priority:
+//	None | High  | Medium  | Low 
+//;
+//Terminals
+//enum Boolean:
+//	fals | tru
+//;
+
+QualifiedName:
+ID ('.' ID)*
+;
+
+//terminal DOUBLE returns ecore::EDouble: INT ('.' INT+);
+/*
+ * As a guide for feature
+ */
+//terminal fragment DIGIT: '0'..'9';
+//terminal fragment HEX_DIGIT: (DIGIT |'a'..'f'|'A'..'F');
+//terminal fragment ALPHANUM: ('a'..'z'|'A'..'Z'|'_'|DIGIT);
+//terminal HEXINT: '0' ('x'|'X') HEX_DIGIT+;
+//terminal OCTINT: '0' ('0'..'7')+;
+//terminal DOUBLE returns ecore::EDouble: DECINT (('.' DIGIT*) | (('.' DIGIT*)? ('E'|'e') ('-'|'+')? DECINT));  // Use terminal to avoid 'e' turning into a keyword
+//terminal DECINT: '0' | ('1'..'9' DIGIT*);
+terminal QUALITATIVEVALUE : ('-'|'+')? ( (('0'..'9')('0'..'9')?) | ('100')) ;
